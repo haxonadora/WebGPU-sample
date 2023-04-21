@@ -9,47 +9,48 @@ const [device, context] = await init(document.querySelector("#my-canvas")!);
 const canvas: HTMLCanvasElement = document.querySelector("#my-canvas")!;
 const aspectRatio = canvas.width / canvas.height;
 export const cubeVertexArray = new Float32Array([
-  1, -1, 1, 1,
-  -1, -1, 1, 1,
-  -1, -1, -1, 1,
-  1, -1, -1, 1,
-  1, -1, 1, 1,
-  -1, -1, -1, 1,
+  // float4 position, float4 color, float2 uv,
+  1, -1, 1, 1,   1, 0, 1, 1,  1, 1,
+  -1, -1, 1, 1,  0, 0, 1, 1,  0, 1,
+  -1, -1, -1, 1, 0, 0, 0, 1,  0, 0,
+  1, -1, -1, 1,  1, 0, 0, 1,  1, 0,
+  1, -1, 1, 1,   1, 0, 1, 1,  1, 1,
+  -1, -1, -1, 1, 0, 0, 0, 1,  0, 0,
 
-  1, 1, 1, 1,
-  1, -1, 1, 1,
-  1, -1, -1, 1,
-  1, 1, -1, 1,
-  1, 1, 1, 1,
-  1, -1, -1, 1,
+  1, 1, 1, 1,    1, 1, 1, 1,  1, 1,
+  1, -1, 1, 1,   1, 0, 1, 1,  0, 1,
+  1, -1, -1, 1,  1, 0, 0, 1,  0, 0,
+  1, 1, -1, 1,   1, 1, 0, 1,  1, 0,
+  1, 1, 1, 1,    1, 1, 1, 1,  1, 1,
+  1, -1, -1, 1,  1, 0, 0, 1,  0, 0,
 
-  -1, 1, 1, 1,
-  1, 1, 1, 1,
-  1, 1, -1, 1,
-  -1, 1, -1, 1,
-  -1, 1, 1, 1,
-  1, 1, -1, 1,
+  -1, 1, 1, 1,   0, 1, 1, 1,  1, 1,
+  1, 1, 1, 1,    1, 1, 1, 1,  0, 1,
+  1, 1, -1, 1,   1, 1, 0, 1,  0, 0,
+  -1, 1, -1, 1,  0, 1, 0, 1,  1, 0,
+  -1, 1, 1, 1,   0, 1, 1, 1,  1, 1,
+  1, 1, -1, 1,   1, 1, 0, 1,  0, 0,
 
-  -1, -1, 1, 1,
-  -1, 1, 1, 1,
-  -1, 1, -1, 1,
-  -1, -1, -1, 1,
-  -1, -1, 1, 1,
-  -1, 1, -1, 1,
+  -1, -1, 1, 1,  0, 0, 1, 1,  1, 1,
+  -1, 1, 1, 1,   0, 1, 1, 1,  0, 1,
+  -1, 1, -1, 1,  0, 1, 0, 1,  0, 0,
+  -1, -1, -1, 1, 0, 0, 0, 1,  1, 0,
+  -1, -1, 1, 1,  0, 0, 1, 1,  1, 1,
+  -1, 1, -1, 1,  0, 1, 0, 1,  0, 0,
 
-  1, 1, 1, 1,
-  -1, 1, 1, 1,
-  -1, -1, 1, 1,
-  -1, -1, 1, 1,
-  1, -1, 1, 1,
-  1, 1, 1, 1,
+  1, 1, 1, 1,    1, 1, 1, 1,  1, 1,
+  -1, 1, 1, 1,   0, 1, 1, 1,  0, 1,
+  -1, -1, 1, 1,  0, 0, 1, 1,  0, 0,
+  -1, -1, 1, 1,  0, 0, 1, 1,  0, 0,
+  1, -1, 1, 1,   1, 0, 1, 1,  1, 0,
+  1, 1, 1, 1,    1, 1, 1, 1,  1, 1,
 
-  1, -1, -1, 1,
-  -1, -1, -1, 1,
-  -1, 1, -1, 1,
-  1, 1, -1, 1,
-  1, -1, -1, 1,
-  -1, 1, -1, 1,
+  1, -1, -1, 1,  1, 0, 0, 1,  1, 1,
+  -1, -1, -1, 1, 0, 0, 0, 1,  0, 1,
+  -1, 1, -1, 1,  0, 1, 0, 1,  0, 0,
+  1, 1, -1, 1,   1, 1, 0, 1,  1, 0,
+  1, -1, -1, 1,  1, 0, 0, 1,  1, 1,
+  -1, 1, -1, 1,  0, 1, 0, 1,  0, 0,
 ]);
 
 // Now draw the rest of the motherf****ing owl.
@@ -127,16 +128,16 @@ const pipeline = device.createRenderPipeline({
     // Backface culling since the cube is solid piece of geometry.
     // Faces pointing away from the camera will be occluded by faces
     // pointing toward the camera.
-    cullMode: 'back', //totest
+    cullMode: "front",
   },
 
   // Enable depth testing so that the fragment closest to the camera
   // is rendered in front.
-  // depthStencil: {
-  //   depthWriteEnabled: true,
-  //   depthCompare: 'less',
-  //   format: 'depth24plus',
-  // },
+  depthStencil: {
+    depthWriteEnabled: true,
+    depthCompare: 'less',
+    format: 'depth24plus',
+  },
 });
 
 const projectionMat = mat4.create();
@@ -148,7 +149,7 @@ mat4.perspective(projectionMat, (2 * Math.PI) / 5, aspectRatio, 1.0, 100.0);
 function transformationMatrix(t: number): Float32Array {
   const viewMat = mat4.create();
   // Move model coordinates (x, y, 1.0) farther from the camera.
-  mat4.translate(viewMat, viewMat, vec3.fromValues(0, 0, -4));
+  mat4.translate(viewMat, viewMat, vec3.fromValues(1, 1, -4));
 
   // Rotate every frame around the Z axis, so x & y will change and z will remain unchanged.
   mat4.rotateZ(viewMat, viewMat, t);
@@ -225,8 +226,33 @@ const bindGroup = device.createBindGroup({
   ],
 });
 
+
+const depthTexture = device.createTexture({
+  size: [canvas.width, canvas.height],
+  format: 'depth24plus',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+
+const view = context.getCurrentTexture().createView();
+const renderPassDescriptor: GPURenderPassDescriptor = {
+  colorAttachments: [
+    {
+      view,
+      clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+      loadOp: "clear",
+      storeOp: "store",
+    },
+  ],
+  depthStencilAttachment: {
+    view: depthTexture.createView(),
+
+    depthClearValue: 1.0,
+    depthLoadOp: 'clear',
+    depthStoreOp: 'store',
+  },
+};
+
 const renderFrame = () => {
-  const view = context.getCurrentTexture().createView();
   const encoder = device.createCommandEncoder();
   // Get our transformation matrix.
   const tMat = transformationMatrix(Date.now() / 1000.0);
@@ -239,23 +265,16 @@ const renderFrame = () => {
     tMat.byteOffset,
     tMat.byteLength
   );
-
-  const renderPass = encoder.beginRenderPass({
-    colorAttachments: [
-      {
-        view,
-        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
-        loadOp: "clear",
-        storeOp: "store",
-      },
-    ],
-  });
+  renderPassDescriptor.colorAttachments[0].view = context
+  .getCurrentTexture()
+  .createView();
+  const renderPass = encoder.beginRenderPass(renderPassDescriptor);
   renderPass.setPipeline(pipeline);
   // We need to set bind group we've created to use in shaders.
   renderPass.setBindGroup(0, bindGroup);
   // We need to set the vertex buffer as well.
   renderPass.setVertexBuffer(0, vertisiesBuffer);
-  renderPass.draw(14, 1, 0, 0);
+  renderPass.draw(16, 1, 0, 0);
   renderPass.end();
   device.queue.submit([encoder.finish()]);
   requestAnimationFrame(renderFrame);
