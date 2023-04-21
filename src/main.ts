@@ -113,6 +113,12 @@ const pipeline = device.createRenderPipeline({
             format: 'float32x4',
           },
           {
+            // color
+            shaderLocation: 2,
+            offset: 4 * 4, //totest
+            format: "float32x4",
+          },
+          {
             // uv
             shaderLocation: 1,
             offset: 4 * 8,//totest
@@ -123,12 +129,12 @@ const pipeline = device.createRenderPipeline({
     ],
   },
   primitive: {
-    topology: 'triangle-list',
-
+    topology: "triangle-list",
+    frontFace: "ccw",
     // Backface culling since the cube is solid piece of geometry.
     // Faces pointing away from the camera will be occluded by faces
     // pointing toward the camera.
-    cullMode: "front",
+    cullMode: "back",
   },
 
   // Enable depth testing so that the fragment closest to the camera
@@ -149,10 +155,10 @@ mat4.perspective(projectionMat, (2 * Math.PI) / 5, aspectRatio, 1.0, 100.0);
 function transformationMatrix(t: number): Float32Array {
   const viewMat = mat4.create();
   // Move model coordinates (x, y, 1.0) farther from the camera.
-  mat4.translate(viewMat, viewMat, vec3.fromValues(1, 1, -4));
+  mat4.translate(viewMat, viewMat, vec3.fromValues(0, 0, -4));
 
   // Rotate every frame around the Z axis, so x & y will change and z will remain unchanged.
-  mat4.rotateZ(viewMat, viewMat, t);
+  mat4.rotateY(viewMat, viewMat, t);
 
   const cameraMat = mat4.create();
   mat4.multiply(cameraMat, projectionMat, viewMat);
@@ -274,7 +280,7 @@ const renderFrame = () => {
   renderPass.setBindGroup(0, bindGroup);
   // We need to set the vertex buffer as well.
   renderPass.setVertexBuffer(0, vertisiesBuffer);
-  renderPass.draw(16, 1, 0, 0);
+  renderPass.draw(36, 1, 0, 0);
   renderPass.end();
   device.queue.submit([encoder.finish()]);
   requestAnimationFrame(renderFrame);
